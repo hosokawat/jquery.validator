@@ -1,7 +1,20 @@
 ;(function() {
+  GroupValidator = (function(){
+    return {
+      extend:function(rule_name,func){
+        this[rule_name] = func;
+      }
+      //func param elements[group_key],params[group_key]
+    }
+  })();
+
+  GroupValidator.extend('test',function(datas,params){
+    return false;
+  })
 	$.error_messsages = {
 		'isLength': '長さー{0},{1}',
-		'isEmail': 'メアドじゃないー'
+		'isEmail': 'メアドじゃないー',
+    'test':'test!'
 	};
 
 	function first() {
@@ -54,29 +67,32 @@
 		var priority = 0;
 		var uid = next_uid();
 		for (var key in rules) {
-			var group, name;
+			var name, group, group_key;
 			if (/#/.test(key)) {
-				var matches = key.match(/(.*)#(.*)/);
+				var matches = key.match(/([^#]+)#([^\\.]+)(?:\.(.+))*/);
 				name = matches[1];
 				group = matches[2];
+        group_key = matches[3];
 			} else {
 				name = key;
 				group = null;
+        group_key = null;
 			}
-			result.push(Rule(this, name, group, rules[key], priority, uid));
+			result.push(Rule(this, name, group, rules[key], priority, uid,group_key));
 			priority++;
 		}
 		return result;
 	}
 
-	function Rule(input, name, group, params, priority, uid) {
+	function Rule(input, name, group, params, priority, uid, group_key) {
 		return {
 			input: input,
 			name: name,
 			group: group,
 			params: params,
 			priority: priority,
-			uid: uid
+			uid: uid,
+      group_key:group_key
 		};
 	}
 
@@ -96,11 +112,44 @@
 		return validator[rule_name].apply(this, [$(this).val()].concat(params));
 	}
 
-	function group_validate(rule) {
-		console.log('comming soon!');
-		return null;
-		//return run_group_validator.call(this.input,rule.name,rule.params)
+	function group_validate(rules) {
+    var inputs = {};
+    var params = {};
+    var rule_name = first.call(rules).name;
+    for(var key in rules) {
+      inputs[rules[key].group_key] = $(rules[key].input).val();
+      params[rules[key].group_key] = rules[key].params;
+    };
+    console.log('a1');
+    console.log(inputs);
+    console.log(params);
+
+    var errors = [];
+    if(!run_group_validator.call(this, rule_name, inputs, params)) {
+      for(var key in rules) {
+        console.log('make error');
+
+        console.log(rules[key]);
+        errors.push(Error(rule_name, rules[key].input, rules[key].priority, rules[key].uid, rules[key].params));
+      };
+    }
+    console.log('errors');
+    console.log(errors);
+    return errors;
 	}
+
+  function run_group_validator(rule_name, inputs ,params) {
+    console.log(inputs);
+    console.log(params);
+
+		if (typeof GroupValidator[rule_name] == 'undefined') {
+			console.error('バリデートルール' + rule_name　 + 'は未定義です。')
+			return true;
+		}
+    console.log('結果:' + GroupValidator[rule_name].call(this, inputs, params))
+		return GroupValidator[rule_name].call(this, inputs, params);
+	}
+
 
 	function create_error_message(rule_name, params) {
 		if (typeof $.error_messsages[rule_name] == 'undefined') {
@@ -175,7 +224,7 @@
 			}
 			$(rules).each(function() {
 				if (this.group) {
-					var group_rule = this.group + '#' + this.rule;
+					var group_rule = this.group + '#' + this.name;
 					if (typeof group_validates[group_rule] == 'undefined') {
 						//グループのは後回し
 						group_validates[group_rule] = [];
@@ -189,9 +238,9 @@
 
 		});
 		//group
-		$(group_validates).each(function() {
-			group_validate(this);
-		});
+		for(var key in group_validates) {
+			errors = errors.concat(group_validate.call(form,group_validates[key]));
+		};
 
 		options.manual_validate.call(this,errors,options);
 		input_errors = [];
@@ -212,7 +261,6 @@
 			options.fail.call(form, errors, options);
 		} else {
 			options.success.call(form, errors, options);
-
 		}
 
 		options.finish.call(form, errors, options);
