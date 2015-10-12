@@ -1,6 +1,5 @@
 # jquery.validator
 A simple, best jquery form validator plugin
-シンプルで使いやすいformバリデートプラグインです
 
 ##Installation
 
