@@ -107,7 +107,15 @@
 			console.error('エラーメッセージが未定義です')
 			return ''
 		}
-		return $.error_messsages[rule_name];
+
+    var message = $.error_messsages[rule_name]
+    for(var i = 0 ; i < params.length ; i++) {
+      var regExp = new RegExp('\\{'+ i + '}','g');
+      out = regExp;
+      message = message.replace(regExp,params[i]);
+    }
+
+		return message;
 	}
 
 	function Error(rule_name, input, priority, uid, params) {
