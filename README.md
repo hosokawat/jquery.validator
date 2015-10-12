@@ -11,9 +11,9 @@ Include script after the Some library :
 ```
 
 ##Example
-validate rule of .input1
-- required
-- Below 3 character beyond 1 character 
+バリデートのルールが
+- 必須
+- 1文字以上3文字以下の場合 
 
 javascript
 ```
