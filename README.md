@@ -1,2 +1,2 @@
 # jquery.validator
-best jquery validator plugin
+A simple, best jquery validator plugin
