@@ -1,6 +1,6 @@
 # jquery.validator
-A simple, best jquery validator plugin
-
+A simple, best jquery form validator plugin
+シンプルで使いやすいformバリデートプラグインです
 
 ##Installation
 
@@ -19,7 +19,7 @@ validate rule of .input1
 javascript
 ```
 $(function(){
-$('#f').validator()
+  $('#f').validator()
 });
 ```
 html
@@ -30,3 +30,10 @@ html
   </form>
 </body>
 ```
+
+##Usage
+
+
+##Please Help!
+The person who translates Japanese into English is recruited.
+日本語を英語に翻訳してくれる人を募集
