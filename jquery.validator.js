@@ -99,7 +99,7 @@
 
     function run_validator(rule_name, params) {
         if (typeof validator[rule_name] == 'undefined') {
-            console.error('バリデートルール' + rule_name　 + 'は未定義です。');
+            console.error('validate rule ' + rule_name　 + ' is undefined');
             return true;
         }
         return validator[rule_name].apply(this, [$(this).val()].concat(params));
@@ -126,7 +126,7 @@
 
     function run_group_validator(rule_name, inputs, params) {
         if (typeof GroupValidator[rule_name] == 'undefined') {
-            console.error('バリデートルール' + rule_name　 + 'は未定義です。');
+            console.error('group validate rule ' + rule_name　 + ' is undefined');
             return true;
         }
         return GroupValidator[rule_name].call(this, inputs, params);
