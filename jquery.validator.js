@@ -92,7 +92,7 @@
     function validate(rule) {
         var result = run_validator.call(rule.input, rule.name, rule.params);
         if (!result) {
-            return Error(rule.name, rule.input, rule.priority, rule.uid, rule.params);
+            return Error(rule.name, rule.input, rule.priority, rule.uid, rule.params,null);
         }
         return;
     }
@@ -118,7 +118,7 @@
         var errors = [];
         if (!run_group_validator.call(this, rule_name, inputs, params)) {
             for (key in rules) {
-                errors.push(Error(rule_name, rules[key].input, rules[key].priority, rules[key].uid, rules[key].params));
+                errors.push(Error(rule_name, rules[key].input, rules[key].priority, rules[key].uid, rules[key].params,rules[key].group_key));
             }
         }
         return errors;
@@ -133,12 +133,16 @@
     }
 
 
-    function create_error_message(rule_name, params) {
-        if (typeof $.error_messsages[rule_name] == 'undefined') {
+    function create_error_message(rule_name, params, group_key) {
+      var error_id = rule_name;
+      if(group_key != null) {
+        error_id = error_id + '.' + group_key;
+      }
+        if (typeof $.error_messsages[error_id] == 'undefined') {
             return '';
         }
 
-        var message = $.error_messsages[rule_name];
+        var message = $.error_messsages[error_id];
         for (var i = 0; i < params.length; i++) {
             var regExp = new RegExp('\\{' + i + '}', 'g');
             out = regExp;
@@ -148,30 +152,26 @@
         return message;
     }
 
-    function Error(rule_name, input, priority, uid, params) {
+    function Error(rule_name, input, priority, uid, params,group_key) {
         return {
             rule_name: rule_name,
             input: input,
             priority: priority,
             uid: uid,
-            message: create_error_message(rule_name, params)
+            message: create_error_message(rule_name, params, group_key)
         };
     }
 
 
     $.validator_default_options = {
         setup: function() {
-            console.log('setup!');
         },
         success: function() {
-            console.log('success!');
         },
         fail: function() {
-            console.log('fail!');
         },
         default_submit: true,
         manual_validate: function() {
-            console.log('manual_validate!');
         },
         message_class: 'validator_message',
         output_errors: function output_errors(output_error, errors) {
@@ -179,7 +179,7 @@
                 output_error.call(this, errors[key].message, errors[key]);
             }
         },
-        output_error: function output_error(message) {
+        output_error: function output_error(message,error) {
             $(this).after("<p style='color:red' class='validator_message'>" + message + "</p>");
         },
         finish: function() {
