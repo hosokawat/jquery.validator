@@ -174,16 +174,15 @@
         manual_validate: function() {
         },
         message_class: 'validator_message',
-        output_errors: function output_errors(output_error, errors) {
+        output_errors: function output_errors(output_error, errors,message_class) {
             for (var key in errors) {
-                output_error.call(this, errors[key].message, errors[key]);
+                output_error.call(this, errors[key].message, errors[key],message_class);
             }
         },
-        output_error: function output_error(message,error) {
-            $(this).after("<p style='color:red' class='validator_message'>" + message + "</p>");
+        output_error: function output_error(message,error,message_class) {
+            $(this).after("<p style='color:red' class='" + message_class + "'>" + message + "</p>");
         },
         finish: function() {
-            console.log('finish!');
         }
     };
     $.fn.validator = function(_options) {
@@ -201,8 +200,6 @@
     };
 
     function _validator(_options) {
-        // はじめに!
-        //parse
         var options = $.extend({}, $.validator_default_options, _options);
         var form = this;
         options.setup.call(this, options);
@@ -254,7 +251,7 @@
             if (typeof input_errors[key] == 'undefined') {
                 return;
             }
-            options.output_errors.call(first.call(input_errors[key]).input, options.output_error, input_errors[key]);
+            options.output_errors.call(first.call(input_errors[key]).input, options.output_error, input_errors[key],options.message_class);
         }
 
         if (input_errors.length > 0) {
