@@ -177,7 +177,6 @@
         output_errors: function output_errors(output_error, errors,message_class) {
             for (var key in errors) {
                 if($(this).data('validate-message-destination')) {
-                  console.log($(this).data('validate-message-destination'))
                 output_error.call($($(this).data('validate-message-destination')), errors[key].message, errors[key],message_class);
                 } else {
                 output_error.call(this, errors[key].message, errors[key],message_class);
