@@ -50,17 +50,25 @@ html
 ```
 ## チュートリアル
 ### 一つのデータをバリデートする
-javascript
-```
+#### 1.validatorの初期化をするjavascriptコードを書く
+
+jquery.validatorの実行はユーザのsubmit操作により実行されるように設定する方法と
+javascriptで即時に実行する方法があります。
+
+今回はユーザのsubmit操作で実行されるように初期化します。
+```javascript
 $(function(){
   $('#f').validator();
-  //エラーメッセージ
 });
 ```
- #fのformをvalidatorに初期化します。
+ これで#fのformをsubmitした時にバリデートが行われるように設定されました。
+ もしエラーが起きればsubmitはキャンセルされます。
+#### 2.バリデートルールを設定する
+バリデートルールはバリデートを行うinputタグのdata-validate-rules属性に書きます。
+複数ノバリデートルールを順番に行うときは左からカンマで区切り記述できます。
 
 html
-```
+```html
 <body>
   <form id='f'>
   <input data-validate-rules='required,isLength(1,3)'>
@@ -68,19 +76,34 @@ html
   </form>
 </body>
 ```
+今回はrequiredで必須を設定し、isLength(1,3)で1文字以上、３文字以下と設定しました。
+まず、valueが空になっていれば、requiredのエラーが起きます。
+次に1文字以上、３文字以下になっていなければisLengthのエラーが起きます。
 
-バリデート対象のdata-validate-rules属性にバリデートを行うルールを書きます。
-必須項目の場合は、required
-文字の長さが1文字以上３文字以下の場合、
-isLengthを使いパラメータに(1,3)と設定します。
+#### 3.エラーメッセージを設定します。
 
+エラーメッセージの設定は$.error_messsagesオブジェクトに
+メンバ変数を追加して行います。
+
+jQueryを使っているので$.extendで追加できます。
+```javascript
+;$.extend($.error_messsages,{
+  'isLength': '文字数{0}以上、{1}以下を入力してください。',
+  'required':'必須です'
+});
+```
+isLengthのようにオプションを持つバリデートルールのエラーメッセージには
+オプションの値を組み込むことができます。
+0から順番に{位置番号}と書きます。
+
+
+### 独自のバリデータを作る
 
 ### 複数要素を組み合わせてバリデートする
 
 ### バリデータを使い分ける
 
-
-## 使い方
+## 詳細な使い方
 ### 初期化設定
 ```
 $.validator('#id');
