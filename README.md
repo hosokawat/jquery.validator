@@ -17,7 +17,7 @@ validate.js(https://github.com/chriso/validator.js)
 - jQuery 1.x (https://jquery.com)
 - validator.js (https://github.com/chriso/validator.js)
 
-```
+```html
 <script src="/path/to/jquery.validator.js"></script>
 <!-- エラーメッセージファイル、日本語か英語かを選んでください。 -->
 <script src="/path/to/jquery.validator.message.jp.js"></script>
@@ -34,13 +34,13 @@ validate.js(https://github.com/chriso/validator.js)
 を.input1に設定する場合、下記のコードで実装できます。
 
 javascript
-```
+```javascript
 $(function(){
   $('#f').validator();
 });
 ```
 html
-```
+```html
 <body>
   <form id='f'>
   <input class='input1' data-validate-rules='required,isLength(1,3)'>
