@@ -103,14 +103,68 @@ isLengthのようにオプションを持つバリデートルールのエラー
 これで、エラーがすべてなくなるまでフォームのsubmitは中断されます。
 
 ### 独自のバリデートルールを定義する
+validator.jsの拡張として定義します。
+```javascript
+validator.extend('バリデートルール名',function(value){
+  return true;
+})
+
+```
 
 ### 複数要素を組み合わせてバリデートする
+氏名のように２つの項目を参照してバリデートを行い時は
+グループバリデートを使います。
+
+#### グループバリデートルールの定義
+
+#### グループバリデートのエラーメッセージ定義
+
+#### グループバリデートの使用
+
+
+
 
 ### その他、便利機能
 #### エラーメッセージの出力先を変更する
+```html
+<input type='text' data-validate-message-destination='#dummy' data-validate-rules='required,isEmail'>
+```
 #### バリデータを使い分ける
-#### 前後に処理を割り込ませる
+実行のタイミングをjavascriptで制御したい、またはformタグ以外に対してバリデートを行いたい場合、
+```javascript
+$.validator('#f',options);
+```
+お手軽にformのsubmitのタイミングでバリデートされるようにしたい場合、
+```javascript
+$('#f').validator(options);
+```
+#### 複雑なバリデートを行う
+manual_validateのコールバックとしてバリデート処理を実装できます。
+返り値として返したエラー配列がバリデータのエラーに取り込まれます。
+```javascript
+options = {manual_validate:function(){}};
+$.validator('#f',options);
+```
 
+#### バリデート成功してもsubmitしない
+optionのdefault_submitにfalseを設定します。
+#### 前後に処理を割り込ませる
+バリデートのオプションとして前後に実行するコールバック関数を渡すことができます。
+```javascript
+options = {setup:function(){console.log('バリデート処理前');},
+success:function(){console.log('バリデート成功時');},
+fail:function(){console.log('バリデート失敗時');},
+finish:function(){console.log('バリデート完了時');}
+};
+$.validator('#f',options);
+```
+実行前、成功時、失敗時、完了後に行いたい処理を設定することができます。
+
+#### 複数のエラーを出力する
+すべてのエラーを出力したいinputのdata-validate-message-gate属性にmultiを指定します。
+```html
+<input type='text' data-validate-message-gate='multi'  data-validate-rules='required,isEmail'>
+```
 ## 詳細な使い方
 ### 初期化設定
 ```
