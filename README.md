@@ -190,7 +190,8 @@ $.validator('#f',options);
 実行前、成功時、失敗時、完了後に行いたい処理を設定することができます。
 
 #### 複数のエラーを出力する
-すべてのエラーを出力したいinputのdata-validate-message-gate属性にmultiを指定します。
+デフォルトでは左から一番最初にエラーとなったエラーのみが出力されます。
+すべてのエラーを出力したい場合、inputのdata-validate-message-gate属性にmultiを指定します。
 ```html
 <input type='text' data-validate-message-gate='multi'  data-validate-rules='required,isEmail'>
 ```
