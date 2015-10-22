@@ -1,6 +1,6 @@
 ;
 (function() {
-    GroupValidator = (function() {
+    groupValidator = (function() {
         return {
             extend: function(rule_name, func) {
                 this[rule_name] = func;
@@ -161,6 +161,9 @@
             message: create_error_message(rule_name, params, group_key)
         };
     }
+    $.Error = function (rule_name, input, priority, params) {
+      return Error(rule_name, input, priority, next_uid(), params,null);
+    };
 
 
     $.validator_default_options = {
