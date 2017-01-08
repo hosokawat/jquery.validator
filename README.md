@@ -1,23 +1,20 @@
-# jquery.validator
+# jQuery.validator
 
 Formのバリデーションを簡単に行えるようにするjQueryプラグインです。
 
-長いjavascriptを書かなくても、
-inputタグの属性値にバリデーションを行うルールを記述することで
-バリデーションが出来るようになります。
+inputタグの属性値にバリデーションを行うルールを記述することでバリデーションが出来るようになります。
+Java Beansのアノテーションによるvalidationをイメージして作りました。
 
-また、
-validator.js(https://github.com/chriso/validator.js)
-をプリセットのバリデーションルールとして組み込んでいる為、
-初めから様々なバリデートが可能です。
+# 準備
 
-## インストール方法
-
-下記のライブララリを先に読み込んでからこのライブラリを読み込んでください。
+jQuery.validatorを使うには次のライブラリが必要です。
 - jQuery 1.x (https://jquery.com)
 - validator.js (https://github.com/chriso/validator.js)
 
+いくつかのjsファイルを読み込みます。
 ```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/validator/6.2.1/validator.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"> </script>
 <script src="/path/to/jquery.validator.js"></script>
 <!-- エラーメッセージファイル、日本語か英語かを選んでください。 -->
 <script src="/path/to/jquery.validator.message.jp.js"></script>
@@ -25,8 +22,8 @@ validator.js(https://github.com/chriso/validator.js)
 <script src="/path/to/jquery.validator.message.en.js"></script>
 
 ```
-
-## 例
+# 使い方
+# 例
 バリデーションのルールとして
 - 必須
 - 1文字以上3文字以下
@@ -48,6 +45,7 @@ html
   </form>
 </body>
 ```
+# 使い方
 ## チュートリアル
 ### 一つのデータをバリデートする
 #### 1.validatorの初期化をするjavascriptコードを書く
@@ -110,17 +108,17 @@ validator.extend('バリデートルール名',function(value){
 });
 ```
 ### 複数要素を組み合わせてバリデートする
-氏名のように２つの項目を組み合わせたバリデートは
-グループバリデートを使うことでできます。
+姓と名のように複数のinputを組み合わせて行うバリデートは
+グループバリデートを使うとできます。
 
 #### 1.グループバリデートルールの定義
 validator.jsを模倣して作ったgroupValidatorにバリデートルールを定義します。
 ```javascript
-groupValidator.extend('姓名',function(datas,params){
+groupValidator['姓名'] = function(datas,params){
   if(datas['名']!='tarou' || datas['姓']!='hosokawa') {
     return false;
   }
-});
+};
 ```
 datasはグループ内キーをキーとしてinputの値が配列で渡されます。
 paramsはグループ内キーをキーとしてルールのパラメータの値が配列で渡されます。
@@ -191,9 +189,10 @@ $.validator('#f',options);
 
 #### 複数のエラーを出力する
 デフォルトでは左から一番最初にエラーとなったエラーのみが出力されます。
-すべてのエラーを出力したい場合、inputのdata-validate-message-gate属性にmultiを指定します。
+すべてのエラーを出力したい場合、inputのdata-validate-message-limit属性にエラーメッセージを出した件数を指定します。
 ```html
-<input type='text' data-validate-message-gate='multi'  data-validate-rules='required,isEmail'>
+//　エラーを３件出したい時
+<input type='text' data-validate-message-limit='3'  data-validate-rules='required,isEmail'>
 ```
 ## 詳細な使い方
 後で書きます。

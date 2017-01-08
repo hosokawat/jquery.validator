@@ -1,15 +1,11 @@
-;
 (function() {
-    groupValidator = (function() {
-        return {
-            extend: function(rule_name, func) {
-                this[rule_name] = func;
-            }
-        };
-    })();
-    validator.extend('required', function(data) {
+    groupValidator = {};
+    if(typeof validator == 'undefined') {
+        validator = {};
+    }
+    validator.required = function(data) {
         return data.length > 0;
-    });
+    };
 
     $.error_messsages = {};
 
@@ -125,17 +121,17 @@
     }
 
     function run_group_validator(rule_name, inputs, params) {
-        if (typeof GroupValidator[rule_name] == 'undefined') {
+        if (typeof groupValidator[rule_name] == 'undefined') {
             console.error('group validate rule ' + rule_name　 + ' is undefined');
             return true;
         }
-        return GroupValidator[rule_name].call(this, inputs, params);
+        return groupValidator[rule_name].call(this, inputs, params);
     }
 
 
     function create_error_message(rule_name, params, group_key) {
       var error_id = rule_name;
-      if(group_key != null) {
+      if(group_key !== null) {
         error_id = error_id + '.' + group_key;
       }
         if (typeof $.error_messsages[error_id] == 'undefined') {
@@ -178,6 +174,7 @@
         },
         message_class: 'validator_message',
         output_errors: function output_errors(output_error, errors,message_class) {
+            var validate_message_limit = parseInt($(this).data('validate-message-limit') || 1);
             for (var key in errors) {
                 if($(this).data('validate-message-destination')) {
                 output_error.call($($(this).data('validate-message-destination')), errors[key].message, errors[key],message_class);
@@ -185,9 +182,11 @@
                 output_error.call(this, errors[key].message, errors[key],message_class);
 
                 }
-                if($(this).data('validate-message-gate') != 'multi') {
+                if(validate_message_limit === 0) {
                   break;
                 }
+                validate_message_limit--;
+
             }
         },
         output_error: function output_error(message,error,message_class) {
@@ -199,7 +198,7 @@
     $.fn.validator = function(_options) {
         options = $.extend({}, $.validator_default_options, _options);
         $(this).submit(function() {
-            if ($.validator(this, options).length == 0 && options.default_submit) {
+            if ($.validator(this, options).length === 0 && options.default_submit) {
                 return true;
             } else {
                 return false;
