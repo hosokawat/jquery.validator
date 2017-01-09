@@ -18,8 +18,26 @@
       $('#groupForm').validator({default_submit:false});
 
       $('#multiErrorform').validator({setup:function(){console.log('setup');},default_submit:false});
+      $('#doneForm')
+      .validator({setup:function(){console.log('setup');},default_submit:false})
+      .done(function(){
+        console.log('done');
+      }).fail(function(){
+        console.log('fail');
+      }).always(function(){
+        console.log('always');
+      });
 
-multiErrorform
+      $('#doneMethodForm').submit(function(){
+        result = $.validator('#doneMethodForm',{default_submit:false})
+        .done(function(){
+          console.log('done2')
+        }).fail(function(){
+          console.log('fail2');
+        }).always(function(){
+          console.log('always2');
+        }).result();
+      });
     });
   </script>
 </head>
@@ -32,11 +50,21 @@ multiErrorform
   <form action="#" id='groupForm'>
     <label>姓<input type="text" data-validate-rules='required,姓名#groupA.姓'></label>
     <label>名<input type="text" data-validate-rules='required,姓名#groupA.名'></label>
-      <input type="submit">
+    <input type="submit">
   </form>
 
   <form action="#" id='multiErrorform'>
     <input type="text" data-validate-message-limit='3' data-validate-rules='required,isLength(1,3),isAscii,isEmail'>
+    <input type="submit">
+  </form>
+
+  <form action="#" id='doneForm'>
+    <input type="text" data-validate-rules='required'>
+    <input type="submit">
+  </form>
+
+  <form action="#" id='doneMethodForm'>
+    <input type="text" data-validate-rules='required'>
     <input type="submit">
   </form>
 

@@ -103,9 +103,9 @@ isLengthのようにオプションを持つバリデートルールのエラー
 ### 独自のバリデートルールを定義する
 validator.jsの拡張として定義します。
 ```javascript
-validator.extend('バリデートルール名',function(value){
+validator['バリデートルール名'] = function(value){
   return true;
-});
+};
 ```
 ### 複数要素を組み合わせてバリデートする
 姓と名のように複数のinputを組み合わせて行うバリデートは
@@ -175,17 +175,29 @@ $.validator('#f',options);
 ```
 #### バリデート成功してもsubmitしない
 optionのdefault_submitにfalseを設定します。
-#### 前後に処理を割り込ませる
+#### 前後処理を追加する
 バリデートのオプションとして前後に実行するコールバック関数を渡すことができます。
+
+前に実行する処理はoptionに設定しまs。
 ```javascript
-options = {setup:function(){console.log('バリデート処理前');},
-success:function(){console.log('バリデート成功時');},
-fail:function(){console.log('バリデート失敗時');},
-finish:function(){console.log('バリデート完了時');}
+options = {setup:function(){console.log('バリデート処理前');}
 };
 $.validator('#f',options);
 ```
-実行前、成功時、失敗時、完了後に行いたい処理を設定することができます。
+成功後、失敗後、完了後に行いたい処理をメソッドチェインで追加できます。
+同じものが複数あった時には追加した順に実行されます。
+thisはバリデート対象としたformのjQueryオブジェクトです。
+次のコードの場合、メソッドのthisは$('#f')になっています。
+メソッドの第１引数にはエラー内容の配列、第２引数には様々な情報を詰め込んだオブジェクトが渡されます。
+```javascript
+$.validator('#f',options).done(function(errors,options){
+  console.log('バリデート成功後に実行する');
+}).fail(function(errors,options){
+  console.log('バリデート失敗後に実行する');
+}).always(function(errors,options){
+  console.log('バリデート完了後常に実行する');
+});
+```
 
 #### 複数のエラーを出力する
 デフォルトでは左から一番最初にエラーとなったエラーのみが出力されます。

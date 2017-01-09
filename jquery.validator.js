@@ -128,7 +128,6 @@
         return groupValidator[rule_name].call(this, inputs, params);
     }
 
-
     function create_error_message(rule_name, params, group_key) {
       var error_id = rule_name;
       if(group_key !== null) {
@@ -195,18 +194,30 @@
         finish: function() {
         }
     };
-    $.fn.validator = function(_options) {
-        options = $.extend({}, $.validator_default_options, _options);
+
+
+    $.fn.validator = function(options) {
+        var callbacks = Callbacks();
+        var $form = $(this);
         $(this).submit(function() {
-            if ($.validator(this, options).length === 0 && options.default_submit) {
-                return true;
-            } else {
-                return false;
-            }
+          var result = _validator.call($form, options);
+          callbacks.unfire().fire();
+
+          if (result.length === 0 && options.default_submit) {
+              return true;
+          } else {
+              return false;
+          }
         });
+        return  _creat_callback_method_chain(callbacks,$form);
     };
     $.validator = function(form, options) {
-        return _validator.call(form, options);
+      var $form = $(form);
+      var callbacks = Callbacks();
+      var result =  _validator.call($form, options);
+      callbacks.fire();
+      return _creat_callback_method_chain(callbacks,$form);
+
     };
 
     function _validator(_options) {
@@ -229,7 +240,6 @@
                 if (this.group) {
                     var group_rule = this.group + '#' + this.name;
                     if (typeof group_validates[group_rule] == 'undefined') {
-                        //グループのは後回し
                         group_validates[group_rule] = [];
                     }
                     group_validates[group_rule].push(this);
@@ -263,16 +273,75 @@
             }
             options.output_errors.call(first.call(input_errors[key]).input, options.output_error, input_errors[key],options.message_class);
         }
-
-        if (input_errors.length > 0) {
-            options.fail.call(form, errors, options);
-        } else {
-            options.success.call(form, errors, options);
-        }
-
-        options.finish.call(form, errors, options);
+        this.error_length = input_errors.length;
+        this.errors = errors;
+        this.options = options;
 
         return errors;
+    }
+
+    // method chain object
+    function _creat_callback_method_chain(callbacks,$form) {
+      return new (function (callbacks,$form){
+
+        this.done = function(callback){
+          callbacks.add(function(){
+            if ($form.errors.length === 0) {
+              callback.call($form, $form.errors, $form.options);
+            }
+          });
+          return this;
+        };
+        this.fail = function(callback){
+          callbacks.add(function() {
+            if ($form.errors.length > 0) {
+              callback.call($form, $form.errors, $form.options);
+            }
+          });
+          return this;
+        };
+        this.always = function(callback){
+          callbacks.add(function() {
+            callback.call($form, $form.errors, $form.options);
+          });
+          return this;
+        };
+        this.result = function () {
+          return this.errors;
+        };
+
+        return  this;
+      })(callbacks,$form);
+    }
+
+    // async call callback container
+    function Callbacks(){
+      return new (function() {
+        var callbacks = [];
+        this.fired = false;
+        this.add = function(callback) {
+          callbacks.push(callback);
+          if(this.fired) {
+            callback.call(this);
+          }
+          return this;
+        };
+        this.unfire = function(){
+          this.fired = false;
+          return this;
+        };
+        this.fire = function (){
+          if(this.fired){
+            return;
+          }
+
+          for(var key in callbacks) {
+            callbacks[key].call(this);
+          }
+          this.fired = true;
+          return this;
+        };
+      })();
     }
 
 })();
