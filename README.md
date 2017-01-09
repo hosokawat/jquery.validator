@@ -3,15 +3,15 @@
 Formのバリデーションを簡単に行えるようにするjQueryプラグインです。
 
 inputタグの属性値にバリデーションを行うルールを記述することでバリデーションが出来るようになります。
-Java Beansのアノテーションによるvalidationをイメージして作りました。
+Java Beansのアノテーションによるバリデーションルール設定の仕組みをWebページでも使いたくて作りました。
 
 # 準備
 
-jQuery.validatorを使うには次のライブラリが必要です。
+jQuery.validatorを使うには他に次のライブラリが必要です。
 - jQuery 1.x (https://jquery.com)
 - validator.js (https://github.com/chriso/validator.js)
 
-いくつかのjsファイルを読み込みます。
+jsファイルを読み込みます。
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/validator/6.2.1/validator.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"> </script>
@@ -47,23 +47,35 @@ html
 ```
 # 使い方
 ## チュートリアル
-### 一つのデータをバリデートする
-#### 1.validatorの初期化をするjavascriptコードを書く
+jQuery.validatorが持つ代表的な機能を一通り使ってみましょう。
+#### 1.validatorを初期化する
 
-jquery.validatorの実行はユーザのsubmit操作により実行されるように設定する方法と
-javascriptで即時に実行する方法があります。
-
-今回はユーザのsubmit操作で実行されるように初期化します。
+フォームのsubmitの時に実行されるように
+イベントリスナーに登録する方法と、
 ```javascript
 $(function(){
   $('#f').validator();
 });
 ```
- これで#fのformをsubmitした時にバリデートが行われるように設定されました。
- もしエラーが起きればsubmitはキャンセルされます。
+
+即座に実行する方法があります。
+```javascript
+$(function(){
+  $('#f').submit(function(){
+    $.validator('#f');
+  })
+});
+```
+フォームのsubmitの時に実行されるようにした場合、
+バリデーションエラーがあればsubmitはキャンセルさ
+れます。
+即座に実行する場合、formのsubmit処理を別に実装する必要があります。
+結果がbooleanで帰ってくるのでそれによって分岐するか、
+後に出てくる後処理を登録する機能を使うことで実装できます。
+
 #### 2.バリデートルールを設定する
 バリデートルールはバリデートを行うinputタグのdata-validate-rules属性に設定します。
-複数のバリデートを順番に行うときは左からカンマで区切り記述します。
+複数のバリデートを順番に行うときは左からカンマで区切りで記述します。
 
 ```html
 <body>
@@ -73,9 +85,11 @@ $(function(){
   </form>
 </body>
 ```
-今回はrequiredで必須を設定し、isLength(1,3)で1文字以上、３文字以下と設定しました。
+上記のソースでは、requiredで必須を設定し、isLength(1,3)で1文字以上、３文字以下と設定しました。
 まず、valueが空になっていれば、requiredのエラーが起きます。
 次に1文字以上、３文字以下になっていなければisLengthのエラーが起きます。
+
+プリセットでvalidator.jsに実装されているものが使えます。
 
 #### 3.エラーメッセージを設定する
 
@@ -91,14 +105,16 @@ jQueryを使っているので$.extendメソッドを使って追加できます
   'required':'必須です'
 });
 ```
-isLengthのようにオプションを持つバリデートルールのエラーメッセージには
-オプションの値を組み込むことができます。
+isLengthのように引数を持つバリデートルールのエラーメッセージには
+引数の値を組み込むことができます。
 
-0から順番に{位置番号}と入力しておくと自動で置きかわります。
+0から数えて{位置番号}と書いておくと自動で置きかわって出力されます。
 
-#### 4.完成！！！
-フォームのバリデート処理が完成しました。
-これで、エラーがすべてなくなるまでフォームのsubmitは中断されます。
+#### 4.完了
+フォームのバリデート処理が実装できました。
+デフォルトではエラーメッセージは最初の一つだけ出力されます。
+
+独自に実装したバリデーションルールやエラーメッセージは一つのjsファイルにまとめて複数ページで共有しておくと効率的に作業ができおすすめです。
 
 ### 独自のバリデートルールを定義する
 validator.jsの拡張として定義します。
@@ -146,14 +162,28 @@ paramsはグループ内キーをキーとしてルールのパラメータの�
 ```html
 <input type='text' data-validate-message-destination='#dummy' data-validate-rules='required,isEmail'>
 ```
-#### バリデータを使い分ける
-実行のタイミングをjavascriptで制御したい、またはformタグ以外に対してバリデートを行いたい場合、
+#### 前後処理を追加する
+バリデートのオプションとして前後に実行するコールバック関数を渡すことができます。
+
+前に実行する処理はoptionに設定します。
 ```javascript
+options = {setup:function(){console.log('バリデート処理前');}
+};
 $.validator('#f',options);
 ```
-お手軽にformのsubmitのタイミングでバリデートされるようにしたい場合、
+成功後、失敗後、完了後に行いたい処理をメソッドチェインで追加できます。
+同じものが複数あった時には追加した順に実行されます。
+thisはバリデート対象としたformのjQueryオブジェクトです。
+次のコードの場合、メソッドのthisは$('#f')になっています。
+メソッドの第１引数にはエラー内容の配列、第２引数には様々な情報を詰め込んだオブジェクトが渡されます。
 ```javascript
-$('#f').validator(options);
+$.validator('#f',options).done(function(errors,options){
+  console.log('バリデート成功後に実行する');
+}).fail(function(errors,options){
+  console.log('バリデート失敗後に実行する');
+}).always(function(errors,options){
+  console.log('バリデート完了後常に実行する');
+});
 ```
 #### 複雑なバリデートを行う
 manual_validateのコールバックとしてバリデート処理を実装できます。
@@ -175,39 +205,14 @@ $.validator('#f',options);
 ```
 #### バリデート成功してもsubmitしない
 optionのdefault_submitにfalseを設定します。
-#### 前後処理を追加する
-バリデートのオプションとして前後に実行するコールバック関数を渡すことができます。
 
-前に実行する処理はoptionに設定しまs。
-```javascript
-options = {setup:function(){console.log('バリデート処理前');}
-};
-$.validator('#f',options);
-```
-成功後、失敗後、完了後に行いたい処理をメソッドチェインで追加できます。
-同じものが複数あった時には追加した順に実行されます。
-thisはバリデート対象としたformのjQueryオブジェクトです。
-次のコードの場合、メソッドのthisは$('#f')になっています。
-メソッドの第１引数にはエラー内容の配列、第２引数には様々な情報を詰め込んだオブジェクトが渡されます。
-```javascript
-$.validator('#f',options).done(function(errors,options){
-  console.log('バリデート成功後に実行する');
-}).fail(function(errors,options){
-  console.log('バリデート失敗後に実行する');
-}).always(function(errors,options){
-  console.log('バリデート完了後常に実行する');
-});
-```
-
-#### 複数のエラーを出力する
+#### エラーの出力件数上限を設定する
 デフォルトでは左から一番最初にエラーとなったエラーのみが出力されます。
 すべてのエラーを出力したい場合、inputのdata-validate-message-limit属性にエラーメッセージを出した件数を指定します。
 ```html
 //　エラーを３件出したい時
 <input type='text' data-validate-message-limit='3'  data-validate-rules='required,isEmail'>
 ```
-## 詳細な使い方
-後で書きます。
 
 ## Please Help!
 The person who translates Japanese into English is recruited.
