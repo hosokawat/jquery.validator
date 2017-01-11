@@ -193,6 +193,9 @@ $.validator('#f',options).done(function(errors,options){
   console.log('バリデート完了後常に実行する');
 });
 ```
+
+[Demo](https://jsfiddle.net/hosokawat/np3r0z6z/)
+
 #### 複雑なバリデートを行う
 manual_validateのコールバックとしてバリデート処理を実装できます。
 返り値として返したエラー配列がバリデータのエラーに取り込まれます。
