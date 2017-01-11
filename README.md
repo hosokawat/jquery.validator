@@ -32,9 +32,13 @@ jsファイルを読み込みます。
 
 javascript
 ```javascript
-$(function(){
-  $('#f').validator();
+/* エラーメッセージの設定 */
+$.extend($.error_messsages,{
+  'isLength': '{0}文字から{1}までで入力してください',
+  'required':'入力必須です'
 });
+/* コード */
+$('#f').validator();
 ```
 html
 ```html
@@ -45,6 +49,8 @@ html
   </form>
 </body>
 ```
+[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/8/)
+
 # 使い方
 ## チュートリアル
 jQuery.validatorが持つ代表的な機能を一通り使ってみましょう。
@@ -53,19 +59,17 @@ jQuery.validatorが持つ代表的な機能を一通り使ってみましょう�
 フォームのsubmitの時に実行されるように
 イベントリスナーに登録する方法と、
 ```javascript
-$(function(){
-  $('#f').validator();
-});
+$('#f').validator();
 ```
+[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/8/)
+
 
 即座に実行する方法があります。
 ```javascript
-$(function(){
-  $('#f').submit(function(){
-    $.validator('#f');
-  })
-});
+$.validator('#f');
 ```
+[Demo](https://jsfiddle.net/hosokawat/zxod7ckh/)
+
 フォームのsubmitの時に実行されるようにした場合、
 バリデーションエラーがあればsubmitはキャンセルさ
 れます。
@@ -90,6 +94,8 @@ $(function(){
 次に1文字以上、３文字以下になっていなければisLengthのエラーが起きます。
 
 プリセットでvalidator.jsに実装されているものが使えます。
+[validator.js](https://github.com/chriso/validator.js)
+独自のバリデーションを実装して拡張することもできます。
 
 #### 3.エラーメッセージを設定する
 
