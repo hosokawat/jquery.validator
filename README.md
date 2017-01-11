@@ -133,6 +133,8 @@ validator['バリデートルール名'] = function(value){
 姓と名のように複数のinputを組み合わせて行うバリデートは
 グループバリデートを使うとできます。
 
+[Demo](https://jsfiddle.net/hosokawat/r17acnLf/6/)
+
 #### 1.グループバリデートルールの定義
 validator.jsを模倣して作ったgroupValidatorにバリデートルールを定義します。
 ```javascript
