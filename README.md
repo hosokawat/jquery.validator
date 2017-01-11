@@ -49,7 +49,7 @@ html
   </form>
 </body>
 ```
-[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/8/)
+[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/)
 
 # 使い方
 ## チュートリアル
@@ -61,7 +61,7 @@ jQuery.validatorが持つ代表的な機能を一通り使ってみましょう�
 ```javascript
 $('#f').validator();
 ```
-[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/8/)
+[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/)
 
 
 即座に実行する方法があります。
@@ -133,7 +133,7 @@ validator['バリデートルール名'] = function(value){
 姓と名のように複数のinputを組み合わせて行うバリデートは
 グループバリデートを使うとできます。
 
-[Demo](https://jsfiddle.net/hosokawat/r17acnLf/6/)
+[Demo](https://jsfiddle.net/hosokawat/r17acnLf/)
 
 #### 1.グループバリデートルールの定義
 validator.jsを模倣して作ったgroupValidatorにバリデートルールを定義します。
@@ -170,6 +170,7 @@ paramsはグループ内キーをキーとしてルールのパラメータの�
 ```html
 <input type='text' data-validate-message-destination='#dummy' data-validate-rules='required,isEmail'>
 ```
+[Demo](https://jsfiddle.net/hosokawat/t15mg44j/)
 #### 前後処理を追加する
 バリデートのオプションとして前後に実行するコールバック関数を渡すことができます。
 
@@ -217,7 +218,7 @@ $.validator('#f',options);
 #### バリデート成功してもsubmitしない
 optionのdefault_submitにfalseを設定します。
 
-[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/8/)
+[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/)
 
 #### エラーの出力件数上限を設定する
 デフォルトでは左から一番最初にエラーとなったエラーのみが出力されます。
