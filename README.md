@@ -214,6 +214,8 @@ $.validator('#f',options);
 #### バリデート成功してもsubmitしない
 optionのdefault_submitにfalseを設定します。
 
+[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/8/)
+
 #### エラーの出力件数上限を設定する
 デフォルトでは左から一番最初にエラーとなったエラーのみが出力されます。
 すべてのエラーを出力したい場合、inputのdata-validate-message-limit属性にエラーメッセージを出した件数を指定します。
@@ -221,6 +223,8 @@ optionのdefault_submitにfalseを設定します。
 //　エラーを３件出したい時
 <input type='text' data-validate-message-limit='3'  data-validate-rules='required,isEmail'>
 ```
+
+[Demo](https://jsfiddle.net/hosokawat/8khag68t/)
 
 ## Please Help!
 The person who translates Japanese into English is recruited.
