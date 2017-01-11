@@ -181,10 +181,10 @@
                 output_error.call(this, errors[key].message, errors[key],message_class);
 
                 }
+                validate_message_limit--;
                 if(validate_message_limit === 0) {
                   break;
                 }
-                validate_message_limit--;
 
             }
         },
