@@ -157,16 +157,16 @@
         default_submit: true,
         manual_validate: function() {
         },
-        message_class: 'validator_message',
-        output_errors: function output_errors(output_error, errors,message_class) {
+        error_message_class: 'validator_message',
+        error_class: 'validator_error',
+        output_errors: function output_errors(output_error, errors, error_message_class, error_class) {
             var validate_message_limit = parseInt($(this).data('validate-message-limit') || 1);
-
+            $(this).addClass(error_class)
             for (var key in errors) {
                 if($(this).data('validate-message-destination')) {
-                output_error.call($($(this).data('validate-message-destination')), errors[key].message, errors[key],message_class);
+                  output_error.call($($(this).data('validate-message-destination')), errors[key].message, errors[key],error_message_class);
                 } else {
-                output_error.call(this, errors[key].message, errors[key],message_class);
-
+                  output_error.call(this, errors[key].message, errors[key],error_message_class);
                 }
 
                 validate_message_limit--;
@@ -175,8 +175,8 @@
                 }
             }
         },
-        output_error: function output_error(message,error,message_class) {
-            $(this).after("<p style='color:red' class='" + message_class + "'>" + message + "</p>");
+        output_error: function output_error(message,error,error_message_class) {
+            $(this).after("<p style='color:red' class='" + error_message_class + "'>" + message + "</p>");
         }
     };
 
@@ -211,7 +211,7 @@
         options.setup.call(this, options);
         var group_validates = {};
         var errors = [];
-        $(this).find('.' + options.message_class).remove();
+        $(this).find('.' + options.error_message_class).remove();
         $(this).find('input').each(function() {
 
             var $input = $(this);
@@ -260,7 +260,7 @@
             if (typeof input_errors[key] == 'undefined') {
                 return;
             }
-            options.output_errors.call(first.call(input_errors[key]).input, options.output_error, input_errors[key],options.message_class);
+            options.output_errors.call(first.call(input_errors[key]).input, options.output_error, input_errors[key], options.error_message_class, options.error_class);
         }
         this.error_length = errors.length;
         this.errors = errors;

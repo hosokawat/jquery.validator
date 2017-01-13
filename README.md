@@ -22,8 +22,7 @@ jsファイルを読み込みます。
 <script src="/path/to/jquery.validator.message.en.js"></script>
 
 ```
-# 使い方
-# 例
+
 バリデーションのルールとして
 - 必須
 - 1文字以上3文字以下
@@ -174,13 +173,13 @@ paramsはグループ内キーをキーとしてルールのパラメータの�
 #### 前後処理を追加する
 バリデートのオプションとして前後に実行するコールバック関数を渡すことができます。
 
-前に実行する処理はoptionに設定します。
+前に実行する処理はoptionのsetupに設定します。
 ```javascript
 options = {setup:function(){console.log('バリデート処理前');}
 };
 $.validator('#f',options);
 ```
-成功後、失敗後、完了後に行いたい処理をメソッドチェインで追加できます。
+成功後、失敗後、完了後に行いたい処理はメソッドチェインで追加できます。
 同じものが複数あった時には追加した順に実行されます。
 thisはバリデート対象としたformのjQueryオブジェクトです。
 次のコードの場合、メソッドのthisは$('#f')になっています。
@@ -199,12 +198,14 @@ $.validator('#f',options).done(function(errors,options){
 
 #### 複雑なバリデートを行う
 manual_validateのコールバックとしてバリデート処理を実装できます。
-返り値として返したエラー配列がバリデータのエラーに取り込まれます。
-エラーは$.Errorメソッドの返り値として得ます。
+returnとして返したエラー配列がバリデータのエラーに取り込まれます。
+エラーは$.Errorメソッドで作ります。
+
 $.Errorの引数は
 ```javascript
-$.Error('エラーとするバリデートルール',エラーとするinput,エラー出力のプライオリティ(0が最大),オプション値);
+$.Error('エラーとするバリデートルール',エラーとするinput,エラー出力のプライオリティ(0が最大),エラーメッセージに埋め込む値の配列);
 ```
+
 ```javascript
 options = {manual_validate:function(){
   var errors = [];
@@ -215,6 +216,9 @@ options = {manual_validate:function(){
 }};
 $.validator('#f',options);
 ```
+
+[Demo](https://jsfiddle.net/hosokawat/v3u8upuy/)
+
 #### バリデート成功してもsubmitしない
 optionのdefault_submitにfalseを設定します。
 
@@ -229,6 +233,31 @@ optionのdefault_submitにfalseを設定します。
 ```
 
 [Demo](https://jsfiddle.net/hosokawat/8khag68t/)
+
+#### エラーメッセージに自動でつくクラスを変更したい
+バリデートのオプションとしてエラーメッセージにつけるクラス名を設定できます。
+このクラス名は初期化処理としてエラーメッセージを削除する時の目印としても使っています。
+
+error_message_classに設定します。
+```javascript
+options = {error_message_class:'error_message'
+};
+$.validator('#f',options);
+```
+
+[Demo](https://jsfiddle.net/hosokawat/svb3ehqj/)
+
+#### エラーのあったinputに自動でつくクラスを変更したい
+バリデートのオプションとしてエラーのあったinputにつけるクラス名を設定できます。
+
+error_classに設定します。
+```javascript
+options = {error_class:'error'
+};
+$.validator('#f',options);
+```
+
+[Demo](https://jsfiddle.net/hosokawat/svb3ehqj/)
 
 ## Please Help!
 The person who translates Japanese into English is recruited.
