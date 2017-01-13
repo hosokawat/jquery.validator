@@ -105,8 +105,8 @@ $.validator('#f');
 
 jQueryを使っているので$.extendメソッドを使って追加できます。
 ```javascript
-;$.extend($.error_messsages,{
-  'isLength': '文字数{0}以上、{1}以下を入力してください。',
+$.extend($.error_messsages,{
+  'isLength': '文字数{0}以上、{1}以下を入力してください',
   'required':'必須です'
 });
 ```
@@ -150,8 +150,8 @@ paramsはグループ内キーをキーとしてルールのパラメータの�
 ルール名の後に、ドットでグループ内キーを入力して追加するとそれぞれのグループないキーに出力されます。
 ```javascript
 ;$.extend($.error_messsages,{
-  '姓名.姓':'姓が違っている!',
-  '姓名.名':'名が違っている!'
+  '姓名.姓':'姓が違っています',
+  '姓名.名':'名が違っています'
 });
 ```
 #### 3.グループバリデートの使用
@@ -258,6 +258,22 @@ $.validator('#f',options);
 ```
 
 [Demo](https://jsfiddle.net/hosokawat/svb3ehqj/)
+
+#### エラーメッセージをバリデート対象毎に変えたい
+エラーメッセージを定義する時に#でprefixをつけて、
+```javascript
+$.extend($.error_messsages,{
+  'isLength': '文字数{0}以上、{1}以下を入力してください',
+  'name#required':'お名前は必須です'
+});
+```
+
+バリデートを行うinputタグのdata-validate-rules属性にprefixを設定することで
+prefixがついているエラーメッセージがあった時にそちらを優先するようになります。
+
+```html
+<input type="text" data-error-message-prefix='name' data-validate-rules='required,isLength(1,3)'>
+```
 
 ## Please Help!
 The person who translates Japanese into English is recruited.

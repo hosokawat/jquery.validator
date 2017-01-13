@@ -124,18 +124,24 @@
       if(group_key !== null) {
         error_id = error_id + '.' + group_key;
       }
-        if (typeof $.error_messsages[error_id] == 'undefined') {
-            return '';
-        }
+      var prefix = $(this).data('error-message-prefix');
+      var message;
 
-        var message = $.error_messsages[error_id];
-        for (var i = 0; i < params.length; i++) {
-            var regExp = new RegExp('\\{' + i + '}', 'g');
-            out = regExp;
-            message = message.replace(regExp, params[i]);
-        }
+      if (typeof $.error_messsages[prefix + '#' + error_id] != 'undefined') {
+        message = $.error_messsages[prefix + '#' + error_id];
+      } else if (typeof $.error_messsages[error_id] != 'undefined') {
+        message = $.error_messsages[error_id];
+      } else {
+        return '';
+      }
 
-        return message;
+      for (var i = 0; i < params.length; i++) {
+        var regExp = new RegExp('\\{' + i + '}', 'g');
+        out = regExp;
+        message = message.replace(regExp, params[i]);
+      }
+
+      return message;
     }
 
     function Error(rule_name, input, priority, params,group_key) {
@@ -143,7 +149,7 @@
             rule_name: rule_name,
             input: input,
             priority: priority,
-            message: create_error_message(rule_name, params, group_key)
+            message: create_error_message.call(input, rule_name, params, group_key)
         };
     }
     $.Error = function (rule_name, input, priority, params) {
