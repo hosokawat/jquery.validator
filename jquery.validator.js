@@ -15,13 +15,6 @@
         }
     }
 
-    var next_uid = (function() {
-        var next_uid = 0;
-        return function uid() {
-            return next_uid++;
-        };
-    })();
-
     function rule_parse(rule_text) {
         var result = [];
         var split_comma = rule_text.split(/,/g);
@@ -54,7 +47,6 @@
         }
 
         var priority = 0;
-        var uid = next_uid();
         for (var key in rules) {
             var name, group, group_key;
             if (/#/.test(key)) {
@@ -67,20 +59,19 @@
                 group = null;
                 group_key = null;
             }
-            result.push(Rule(this, name, group, rules[key], priority, uid, group_key));
+            result.push(Rule(this, name, group, rules[key], priority, group_key));
             priority++;
         }
         return result;
     }
 
-    function Rule(input, name, group, params, priority, uid, group_key) {
+    function Rule(input, name, group, params, priority, group_key) {
         return {
             input: input,
             name: name,
             group: group,
             params: params,
             priority: priority,
-            uid: uid,
             group_key: group_key
         };
     }
@@ -88,7 +79,7 @@
     function validate(rule) {
         var result = run_validator.call(rule.input, rule.name, rule.params);
         if (!result) {
-            return Error(rule.name, rule.input, rule.priority, rule.uid, rule.params,null);
+            return Error(rule.name, rule.input, rule.priority, rule.params,null);
         }
         return;
     }
@@ -114,7 +105,7 @@
         var errors = [];
         if (!run_group_validator.call(this, rule_name, inputs, params)) {
             for (key in rules) {
-                errors.push(Error(rule_name, rules[key].input, rules[key].priority, rules[key].uid, rules[key].params,rules[key].group_key));
+                errors.push(Error(rule_name, rules[key].input, rules[key].priority, rules[key].params,rules[key].group_key));
             }
         }
         return errors;
@@ -147,26 +138,21 @@
         return message;
     }
 
-    function Error(rule_name, input, priority, uid, params,group_key) {
+    function Error(rule_name, input, priority, params,group_key) {
         return {
             rule_name: rule_name,
             input: input,
             priority: priority,
-            uid: uid,
             message: create_error_message(rule_name, params, group_key)
         };
     }
     $.Error = function (rule_name, input, priority, params) {
-      return Error(rule_name, input, priority, next_uid(), params,null);
+      return Error(rule_name, input, priority, params,null);
     };
 
 
     $.validator_default_options = {
         setup: function() {
-        },
-        success: function() {
-        },
-        fail: function() {
         },
         default_submit: true,
         manual_validate: function() {
@@ -174,6 +160,7 @@
         message_class: 'validator_message',
         output_errors: function output_errors(output_error, errors,message_class) {
             var validate_message_limit = parseInt($(this).data('validate-message-limit') || 1);
+
             for (var key in errors) {
                 if($(this).data('validate-message-destination')) {
                 output_error.call($($(this).data('validate-message-destination')), errors[key].message, errors[key],message_class);
@@ -181,17 +168,15 @@
                 output_error.call(this, errors[key].message, errors[key],message_class);
 
                 }
+
                 validate_message_limit--;
                 if(validate_message_limit === 0) {
                   break;
                 }
-
             }
         },
         output_error: function output_error(message,error,message_class) {
             $(this).after("<p style='color:red' class='" + message_class + "'>" + message + "</p>");
-        },
-        finish: function() {
         }
     };
 
@@ -255,17 +240,21 @@
             errors = errors.concat(group_validate.call(form, group_validates[key]));
         }
 
-        options.manual_validate.call(this, errors, options);
+        var manual_validate_error = options.manual_validate.call(this, errors, options);
+
+        if(Array.isArray(manual_validate_error)){
+          errors = errors.concat(manual_validate_error)
+        }
         var input_errors = {};
         errors = $.grep(errors, function(e) {
             return e;
         });
 
         $(errors).each(function() {
-            if (typeof input_errors[this.uid] == 'undefined') {
-                input_errors[this.uid] = [];
+            if (typeof input_errors[this.input.get(0)] == 'undefined') {
+                input_errors[this.input.get(0)] = [];
             }
-            input_errors[this.uid][this.priority] = this;
+            input_errors[this.input.get(0)][this.priority] = this;
         });
         for (var key in input_errors) {
             if (typeof input_errors[key] == 'undefined') {
@@ -273,7 +262,7 @@
             }
             options.output_errors.call(first.call(input_errors[key]).input, options.output_error, input_errors[key],options.message_class);
         }
-        this.error_length = input_errors.length;
+        this.error_length = errors.length;
         this.errors = errors;
         this.options = options;
 
