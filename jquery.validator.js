@@ -60,7 +60,7 @@
                 group_key = null;
             }
             result.push(Rule(this, name, group, rules[key], priority, group_key));
-            priority++;
+            priority += 100;
         }
         return result;
     }
