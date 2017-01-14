@@ -267,14 +267,13 @@ $.extend($.error_messsages,{
   'name#required':'お名前は必須です'
 });
 ```
-
 バリデートを行うinputタグのdata-validate-rules属性にprefixを設定することで
-prefixがついているエラーメッセージがあった時にそちらを優先するようになります。
+prefixがついているエラーメッセージがあった時はそちらを優先するようになります。
 
 ```html
 <input type="text" data-error-message-prefix='name' data-validate-rules='required,isLength(1,3)'>
 ```
-
+[Demo](https://jsfiddle.net/hosokawat/wopmx00r/)
 ## Please Help!
 The person who translates Japanese into English is recruited.
 

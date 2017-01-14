@@ -167,7 +167,7 @@
         error_class: 'validator_error',
         output_errors: function output_errors(output_error, errors, error_message_class, error_class) {
             var validate_message_limit = parseInt($(this).data('validate-message-limit') || 1);
-            $(this).addClass(error_class)
+            $(this).addClass(error_class);
             for (var key in errors) {
                 if($(this).data('validate-message-destination')) {
                   output_error.call($($(this).data('validate-message-destination')), errors[key].message, errors[key],error_message_class);
@@ -249,26 +249,36 @@
         var manual_validate_error = options.manual_validate.call(this, errors, options);
 
         if(Array.isArray(manual_validate_error)){
-          errors = errors.concat(manual_validate_error)
+          errors = errors.concat(manual_validate_error);
         }
-        var input_errors = {};
+
         errors = $.grep(errors, function(e) {
             return e;
         });
 
+        var input_errors = [];
         $(errors).each(function() {
-            if (typeof input_errors[this.input.get(0)] == 'undefined') {
-                input_errors[this.input.get(0)] = [];
+          var error = this;
+          var hit = false;
+          $(input_errors).each(function(){
+            if(this.is(error.input)){
+              this.errors[error.priority] = error;
+              hit = true;
             }
-            input_errors[this.input.get(0)][this.priority] = this;
+          });
+          if(!hit){
+            var input = error.input;
+            input.errors = [];
+            input.errors[error.priority] = error;
+            input_errors.push(input);
+          }
         });
-        for (var key in input_errors) {
-            if (typeof input_errors[key] == 'undefined') {
-                return;
-            }
-            options.output_errors.call(first.call(input_errors[key]).input, options.output_error, input_errors[key], options.error_message_class, options.error_class);
-        }
-        this.error_length = errors.length;
+
+        $(input_errors).each(function(){
+          options.output_errors.call(this, options.output_error, this.errors, options.error_message_class, options.error_class);
+        });
+
+        this.error_length = input_errors.length;
         this.errors = errors;
         this.options = options;
 
