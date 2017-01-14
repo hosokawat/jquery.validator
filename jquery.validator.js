@@ -46,7 +46,7 @@
             }
         }
 
-        var priority = 0;
+        var priority = 100;
         for (var key in rules) {
             var name, group, group_key;
             if (/#/.test(key)) {
