@@ -181,9 +181,9 @@ $.validator('#f',options);
 ```
 成功後、失敗後、完了後に行いたい処理はメソッドチェインで追加できます。
 同じものが複数あった時には追加した順に実行されます。
-thisはバリデート対象としたformのjQueryオブジェクトです。
-次のコードの場合、メソッドのthisは$('#f')になっています。
-メソッドの第１引数にはエラー内容の配列、第２引数には様々な情報を詰め込んだオブジェクトが渡されます。
+thisはバリデート対象としたformです。
+次のコードの場合、メソッドのthisはidがfのformタグになっています。
+メソッドの第１引数にはエラー内容の配列、第２引数には内部で使った様々な情報を詰め込んだオブジェクトが渡されます。
 ```javascript
 $.validator('#f',options).done(function(errors,options){
   console.log('バリデート成功後に実行する');
@@ -199,7 +199,11 @@ $.validator('#f',options).done(function(errors,options){
 #### バリデート成功してもsubmitしない
 optionのdefault_submitにfalseを設定します。
 
+falseを設定
 [Demo](https://jsfiddle.net/hosokawat/9pp8dc07/)
+
+falseを設定しない(trueを設定)
+[Demo](https://jsfiddle.net/hosokawat/gadLk5gL/)
 
 #### エラーの出力件数上限を設定する
 デフォルトでは左から一番最初にエラーとなったエラーのみが出力されます。
