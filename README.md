@@ -92,8 +92,8 @@ $.validator('#f');
 まず、valueが空になっていれば、requiredのエラーが起きます。
 次に1文字以上、３文字以下になっていなければisLengthのエラーが起きます。
 
-プリセットでvalidator.jsに実装されているものが使えます。
-[validator.js](https://github.com/chriso/validator.js)
+プリセットで[validator.js](https://github.com/chriso/validator.js)に実装されているものが使えます。
+
 独自のバリデーションを実装して拡張することもできます。
 
 #### 3.エラーメッセージを設定する
