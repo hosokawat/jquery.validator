@@ -218,8 +218,8 @@
         var group_validates = {};
         var errors = [];
         $(this).find('.' + options.error_message_class).remove();
-        $(this).find('input').removeClass(options.error_class);
-        $(this).find('input:not(:disabled)').each(function() {
+        $(this).find('input, select, textarea').removeClass(options.error_class);
+        $(this).find('input:not(:disabled), select:not(:disabled), textarea:not(:disabled)').each(function() {
 
             var $input = $(this);
             var rules_text = $(this).data('validate-rules');
