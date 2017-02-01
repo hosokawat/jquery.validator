@@ -294,6 +294,16 @@ $.validator('#f',options);
 
 [Demo](https://jsfiddle.net/hosokawat/v3u8upuy/)
 
+#### バリデーション対象タグ
+input
+
+[Demo](https://jsfiddle.net/hosokawat/9pp8dc07/)
+select
+
+[Demo]https://jsfiddle.net/hosokawat/nxo2f08r/
+textarea
+
+[Demo] https://jsfiddle.net/hosokawat/fudn8xqo/
 ## Please Help!
 The person who translates Japanese into English is recruited.
 
